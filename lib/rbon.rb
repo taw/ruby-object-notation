@@ -1,5 +1,7 @@
 module RBON
+  # Decoding hacks
   NaN = Float::NAN
+  Infinity = Float::INFINITY
 
   def self.encode(object)
     object.inspect
