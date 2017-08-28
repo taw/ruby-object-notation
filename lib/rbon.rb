@@ -1,3 +1,5 @@
+require "rational"
+require "set"
 
 module RBON
   def self.encode(object)
@@ -23,9 +25,12 @@ module RBON
     when Hash
       "{#{ object.map{|key, value| "#{encode(key)} => #{encode(value)}"}.join(", ") }}"
     when Time
+      # FIXME: This is a bad format, very unfriendly to humans
       "Time.at(#{object.to_i}, #{object.nsec/1000.0})"
     when Set
       "Set[#{ object.map{|item| encode(item)}.join(", ") }]"
+    when Rational
+      "Rational(#{encode(object.numerator)}, #{encode(object.denominator)})"
     else
       raise ArgumentError, "Don't know how to serialize #{object.class}"
     end
