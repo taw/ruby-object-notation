@@ -13,6 +13,8 @@ module RBON
       "[#{ object.map{|item| encode(item)}.join(", ") }]"
     when Hash
       "{#{ object.map{|key, value| "#{encode(key)} => #{encode(value)}"}.join(", ") }}"
+    when Time
+      "Time.at(#{object.to_i}, #{object.nsec/1000.0})"
     else
       raise ArgumentError, "Don't know how to serialize #{object.class}"
     end
