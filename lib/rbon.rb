@@ -1,12 +1,21 @@
-module RBON
-  # Decoding hacks
-  NaN = Float::NAN
-  Infinity = Float::INFINITY
 
+module RBON
   def self.encode(object)
     case object
-    when Integer, Float, String, Symbol, NilClass, TrueClass, FalseClass
+    when Integer, String, Symbol, NilClass, TrueClass, FalseClass
       object.inspect
+    when Float
+      if object.finite?
+        object.inspect
+      elsif object.nan?
+        "Float::NAN"
+      elsif object.infinite?
+        if object.positive?
+          "Float::INFINITY"
+        else
+          "-Float::INFINITY"
+        end
+      end
     when Range
       "#{encode(object.begin)}#{object.exclude_end? ? "..." : ".."}#{encode(object.end)}"
     when Array
