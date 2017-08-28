@@ -12,10 +12,19 @@ end
 
 RSpec::Matchers.define :roundtrip do
   def match?(a,b)
-    return true if a.equal?(b)
-    return true if a.eql?(b)
-    return true if a.is_a?(Array) and b.is_a?(Array) and a.size == b.size and a.zip(b).all?{|x,y| match?(x,y)}
-    false
+    return false unless a.class == b.class
+
+    case a
+    when Float
+      a.equal?(b) or a.eql?(b)
+    when Array
+      a.size == b.size and (0...a.size).all?{|i| match?(a[i], b[i]) }
+    when Hash
+      # We're checking order for round trip
+      match?(a.keys, b.keys) and a.keys.all?{|key| match?(a[key], b[key]) }
+    else
+      a.eql?(b)
+    end
   end
 
   match do |object|
