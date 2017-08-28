@@ -1,3 +1,4 @@
+require "complex"
 require "rational"
 require "set"
 
@@ -31,6 +32,8 @@ module RBON
       "Set[#{ object.map{|item| encode(item)}.join(", ") }]"
     when Rational
       "Rational(#{encode(object.numerator)}, #{encode(object.denominator)})"
+    when Complex
+      "Complex(#{encode(object.real)}, #{encode(object.imag)})"
     else
       raise ArgumentError, "Don't know how to serialize #{object.class}"
     end
