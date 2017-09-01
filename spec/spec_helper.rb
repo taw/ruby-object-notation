@@ -30,15 +30,24 @@ RSpec::Matchers.define :roundtrip do
   match do |object|
     # There's a good deal of hacks necessary
     # because of damn NANs
-    decoded = RBON.decode(RBON.encode(object))
+    encoded = RBON.encode(object)
+    decoded = RBON.decode(encoded)
     match?(object, decoded)
   end
 
   failure_message do |object|
-    decoded = RBON.decode(RBON.encode(object))
-    "Expected `#{object}' to survive RBON round trip:\n" +
-      object.inspect.gsub(/^/, "  ") +
-    "\nInstead got:\n" +
-      decoded.inspect.gsub(/^/, "  ")
+    encoded = RBON.encode(object)
+    decoded = RBON.decode(encoded)
+    encoded2 = RBON.encode(decoded)
+    [
+      "Expected `#{object}' to survive RBON round trip:",
+      object.inspect.gsub(/^/, "  "),
+      "Encoded as:",
+      encoded.inspect.gsub(/^/, "  "),
+      "Instead got:",
+      decoded.inspect.gsub(/^/, "  "),
+      "Encoded as:",
+      encoded2.inspect.gsub(/^/, "  "),
+    ].join("\n")
   end
 end

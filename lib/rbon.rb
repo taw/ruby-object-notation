@@ -1,6 +1,7 @@
 require "complex"
 require "rational"
 require "set"
+require "time"
 
 module RBON
   def self.encode(object)
@@ -18,6 +19,8 @@ module RBON
         else
           "-Float::INFINITY"
         end
+      else
+        raise ArgumentError, "Don't know how to serialize #{object.inspect}"
       end
     when Range
       "#{encode(object.begin)}#{object.exclude_end? ? "..." : ".."}#{encode(object.end)}"
@@ -26,8 +29,7 @@ module RBON
     when Hash
       "{#{ object.map{|key, value| "#{encode(key)} => #{encode(value)}"}.join(", ") }}"
     when Time
-      # FIXME: This is a bad format, very unfriendly to humans
-      "Time.at(#{object.to_i}, #{object.nsec/1000.0})"
+      "Time.iso8601(#{object.iso8601(10).inspect})"
     when Set
       "Set[#{ object.map{|item| encode(item)}.join(", ") }]"
     when Rational
